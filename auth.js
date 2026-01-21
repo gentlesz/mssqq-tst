@@ -157,7 +157,7 @@ export async function ensureUserInDB(userId, username) {
     return;
   }
 
-  const defaultUsername = email.split('@')[0] + '_' + Math.floor(Math.random() * 1000);
+  const defaultUsername = username;
   console.log(`User ${userId} not found, creating with username: ${defaultUsername}`);
   const { data, error } = await supabase
     .from('users')
