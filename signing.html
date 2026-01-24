@@ -47,9 +47,9 @@
         <input type="text" id="username" placeholder="Username" autocomplete="off"/>
         <input type="password" id="password" placeholder="Password"/>
         <div class="auth-buttons">
-            <button onclick="handleSignup()">Sign Up</button>
-            <button onclick="handleLogin()">Login</button>
-            <button onclick="handleGuestPlay()">Guest</button>
+            <button id="signupBtn">Sign Up</button>
+            <button id="loginBtn">Login</button>
+            <button id="guestBtn">Guest</button>
         </div>
       <br>
     </div>
@@ -80,8 +80,8 @@
             </div>
         </div>
         <div class="post-login-buttons">
-            <button class="post-login-btn play-btn" onclick="startGame()">PLAY the Game</button>
-            <button class="post-login-btn buy-btn" onclick="navigateTo('buy.html')">Buy packs</button>
+            <button class="post-login-btn play-btn" id="startGameBtn">PLAY the Game</button>
+            <button class="post-login-btn buy-btn" id="buyPacksBtn">Buy packs</button>
         </div>
     </div>
 
@@ -104,8 +104,8 @@
         <button class="end-turn-btn" id="endTurnBtn">End Turn</button>
         <button class="pause-btn" id="pauseBtn">Pause</button>
         <div class="right-buttons">
-            <button class="how-to-play-btn" id="howToPlayBtn" onclick="showHowTo()">How to Play</button>
-            <button class="end-game-btn" id="endGame" onclick="endTheGame()">End Game</button>
+            <button class="how-to-play-btn" id="howToPlayBtn">How to Play</button>
+            <button class="end-game-btn" id="endGameBtn">End Game</button>
         </div>
         <div class="game-log" id="gameLog"></div>
         <div class="card-tooltip" id="cardTooltip"></div>
@@ -121,9 +121,8 @@
 
     <!-- Scripts -->
     <script type="module">
-        import { signUp, login, getUser, playAsGuest } from './auth.js';
+        import { signUp, login, getUser, playAsGuest, getUserStats, getUserOwnedSets, getUserWallet } from './auth.js';
         import { initializeGame } from './game.js';
-        import { getUserStats, getUserOwnedSets, getUserWallet } from './auth.js';
 
         function showLoadingScreen(text) {
             const loadingScreen = document.getElementById("loadingScreen");
@@ -154,7 +153,8 @@
           console.log("Autoplay blocked:", err);
         });
 
-        window.handleSignup = async function() {
+        // Signup handler
+        document.getElementById('signupBtn').addEventListener('click', async function() {
             const username = document.getElementById("username").value.trim();
             const password = document.getElementById("password").value;
             try {
@@ -163,12 +163,14 @@
                     alert("Signup failed: " + result.error.message);
                     return;
                 }
+                alert("Signup successful! Please login.");
             } catch (err) {
                 alert("Signup error: " + err.message);
             }
-        };
+        });
 
-        window.handleLogin = async function() {
+        // Login handler
+        document.getElementById('loginBtn').addEventListener('click', async function() {
             const username = document.getElementById("username").value.trim();
             const password = document.getElementById("password").value;
             try {
@@ -182,9 +184,9 @@
 
                 const user = await getUser();
                 if (user) {
-                  console.log("statst:", user.id);
+                    console.log("stats:", user.id);
                     const stats = await getUserStats(user.id);
-                    console.log("statst:", stats.total_wins);
+                    console.log("stats:", stats.total_wins);
                     const packs = await getUserOwnedSets(user.id);
                     const wallet = await getUserWallet(user.id);
                     console.log("[Login] Wallet fetched:", wallet);
@@ -214,9 +216,10 @@
                 hideLoadingScreen();
                 alert("Login error: " + err.message);
             }
-        };
+        });
 
-        window.handleGuestPlay = async function() {
+        // Guest handler
+        document.getElementById('guestBtn').addEventListener('click', async function() {
             try {
                 showLoadingScreen("Entering as Guest...");
                 const result = await playAsGuest();
@@ -232,18 +235,25 @@
                 hideLoadingScreen();
                 alert("Guest mode error: " + err.message);
             }
-        };
+        });
 
-        window.startGame = function() {
+        // Start game handler
+        document.getElementById('startGameBtn').addEventListener('click', function() {
             showLoadingScreen("Starting Game...");
             document.getElementById("postLogin").style.display = "none";
             document.getElementById("gameUI").style.display = "block";
             document.getElementById("gameCanvas").style.display = "block";
             document.getElementById("header").style.display = "none";
             initializeGame();
-        };
+        });
 
-        window.showHowTo = function() {
+        // Buy packs handler
+        document.getElementById('buyPacksBtn').addEventListener('click', function() {
+            window.location.href = 'buy.html';
+        });
+
+        // How to play handler
+        document.getElementById('howToPlayBtn').addEventListener('click', function() {
             const tooltip = document.getElementById("howToPlayTooltip");
             tooltip.innerHTML = `
                 <strong>Unveiling the MASQuerade:</strong><br><br>
@@ -255,12 +265,9 @@
                 Embrace the shadows, outwit your rival, and ascend as a legend beneath the MASQ!
             `;
             tooltip.style.display = "block";
-        };
+        });
 
-        window.navigateTo = function(page) {
-            window.location.href = page;
-        };
-
+        // Mute toggle
         const muteToggle = document.getElementById('muteToggle')
         audio.muted = true;
 
@@ -268,7 +275,7 @@
             audio.muted = !audio.muted;
             muteToggle.textContent = audio.muted ? '🔇' : '🔊';
             if (!audio.muted && audio.paused) {
-            audio.play().catch(err => console.log("Autoplay blocked:", err));
+                audio.play().catch(err => console.log("Autoplay blocked:", err));
             }
         });
       
