@@ -289,22 +289,27 @@ button:hover {
 
 .typewriter-container {
   position: fixed;
-  top: calc(7vh + 10px);
-  left: 0;
-  right: 0;
+  top: 15vh;
+  left: 50%;
+  transform: translateX(-50%);
   z-index: 1001;
   text-align: center;
-  padding: 12px 20px;
-  background: linear-gradient(90deg, transparent, rgba(0, 0, 0, 0.8), transparent);
+  padding: 25px 35px;
+  max-width: 500px;
+  background: rgba(20, 20, 20, 0.75);
+  border: 1px solid rgba(255, 215, 0, 0.2);
+  border-radius: 16px;
+  backdrop-filter: blur(10px);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
 }
 
 .typewriter-text {
   color: #FFD700;
-  font-size: 13px;
-  font-family: 'Roboto', sans-serif;
-  margin: 0;
-  text-shadow: 0 0 8px #FF0000;
-  letter-spacing: 1px;
+  font-size: 15px;
+  font-family: 'Cinzel', serif;
+  margin: 10px 0;
+  text-shadow: 0 0 6px rgba(255, 0, 0, 0.4);
+  line-height: 1.8;
 }
 
 .glow {
